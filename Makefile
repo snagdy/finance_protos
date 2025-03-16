@@ -29,12 +29,12 @@ clean:
 # Build Docker image
 docker_build:
 	@echo "Building Docker image..."
-	@docker build -t myname/option-pricing-protos:latest .
+	@docker build -t snagdy/finance-protos:latest .
 
 # Push Docker image to registry
 docker_push: docker_build
 	@echo "Pushing Docker image to registry..."
-	@docker push myname/option-pricing-protos:latest
+	@docker push snagdy/finance-protos:latest
 
 # Run tests
 test: validate
