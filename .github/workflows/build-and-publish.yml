@@ -1,4 +1,6 @@
 name: Build and Publish Protos
+permissions:
+  contents: write
 
 on:
   push:
