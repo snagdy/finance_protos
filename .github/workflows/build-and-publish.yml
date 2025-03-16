@@ -1,0 +1,116 @@
+name: Build and Publish Protos
+
+on:
+  push:
+    branches: [ main ]
+    # Only run when proto files or build configurations change
+    paths:
+      - 'protos/**'
+      - 'Dockerfile'
+      - 'scripts/**'
+      - '.github/workflows/build-and-publish.yml'
+  # Allow manual triggering
+  workflow_dispatch:
+  # Optionally run on tags to create versioned releases
+  tags:
+    - 'v*'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  validate:
+    name: Validate Proto Files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up protoc
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y protobuf-compiler
+
+      - name: Validate proto files
+        run: |
+          chmod +x scripts/validate_protos.sh
+          ./scripts/validate_protos.sh
+
+  build-and-push:
+    name: Build and Push Docker Image
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=ref,event=branch
+            type=sha,format=short
+            latest
+
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  notify:
+    name: Notify on Completion
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: success()
+    steps:
+      - name: Set version output
+        id: version
+        run: |
+          if [[ $GITHUB_REF == refs/tags/v* ]]; then
+            echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+          else
+            echo "version=latest" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Send notification
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const version = '${{ steps.version.outputs.version }}';
+            const repo = context.repo.repo;
+            const owner = context.repo.owner;
+            const imageUrl = `${process.env.REGISTRY}/${owner}/${repo}:${version}`;
+            
+            await github.rest.issues.createComment({
+              owner: owner,
+              repo: repo,
+              issue_number: context.issue.number || (await github.rest.repos.listCommitCommentsForRepo({owner, repo, per_page: 1})).data[0].id,
+              body: `✅ Protocol Buffers Docker image has been built and published: \`${imageUrl}\``
+            }).catch(e => {
+              console.log("Couldn't post comment, probably not a PR: " + e.message);
+            });
