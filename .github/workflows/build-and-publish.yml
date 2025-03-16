@@ -105,12 +105,26 @@ jobs:
             const repo = context.repo.repo;
             const owner = context.repo.owner;
             const imageUrl = `${process.env.REGISTRY}/${owner}/${repo}:${version}`;
-            
-            await github.rest.issues.createComment({
-              owner: owner,
-              repo: repo,
-              issue_number: context.issue.number || (await github.rest.repos.listCommitCommentsForRepo({owner, repo, per_page: 1})).data[0].id,
-              body: `✅ Protocol Buffers Docker image has been built and published: \`${imageUrl}\``
-            }).catch(e => {
-              console.log("Couldn't post comment, probably not a PR: " + e.message);
-            });
+
+            // For push events, we can get the commit SHA
+            const commitSha = context.sha;
+
+            if (context.issue.number) {
+              // This is a PR - post a comment on the PR
+              await github.rest.issues.createComment({
+                owner: owner,
+                repo: repo,
+                issue_number: context.issue.number,
+                body: `✅ Protocol Buffers Docker image has been built and published: \`${imageUrl}\``
+              });
+            } else if (commitSha) {
+              // This is a push - post a commit comment
+              await github.rest.repos.createCommitComment({
+                owner: owner,
+                repo: repo,
+                commit_sha: commitSha,
+                body: `✅ Protocol Buffers Docker image has been built and published: \`${imageUrl}\``
+              });
+            } else {
+              console.log("Could not determine where to post the notification");
+            }
