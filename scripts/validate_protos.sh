@@ -27,7 +27,7 @@ echo "Checking syntax..."
 for proto_file in $PROTO_FILES; do
   echo "  $proto_file"
   # Use /dev/null as output to just check syntax without generating files
-  protoc $INCLUDES --experimental_allow_proto3_optional --proto_path=. --cpp_out=/dev/null $proto_file
+  protoc $INCLUDES --experimental_allow_proto3_optional --proto_path=. --cpp_out=/tmp $proto_file
 done
 
 # Check if protolint exists and use it for style validation
