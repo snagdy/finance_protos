@@ -1,10 +1,16 @@
-# Finance Protocol Buffers
+# Finance Options Protocol Buffers
 
-This repository contains Protocol Buffer definitions for financial calculations and modeling, with a focus on options pricing.
+This repository contains Protocol Buffer definitions for financial options pricing, with a current focus on Black-Scholes model implementation.
 
-## Overview
+## Package Structure
 
-These Protocol Buffer definitions provide standardized message formats for financial data exchange across different services and languages. The current implementation includes specifications for Black-Scholes option pricing.
+All Protocol Buffers in this repository use the `finance.options` package namespace. This provides a consistent way to import and use the messages across different programming languages.
+
+## Available Models
+
+Currently, this repository includes the following model:
+
+- **Black-Scholes Option Pricer**: Standard model for European options pricing
 
 ## Usage
 
@@ -22,21 +28,12 @@ docker cp temp_protos:/gen/python/. ./my_project/generated_protos/
 docker rm temp_protos
 ```
 
-### Available Languages
+### Example Usage by Language
 
-Pre-compiled bindings are available for:
-- C++
-- Python
-- Java
-- Go
-- C#
-
-### Example Usage
-
+#### Python
 ```python
-# Python example using the Black-Scholes proto
-from options.black_scholes_pb2 import BlackScholesParameters, OptionType
-from options.black_scholes_pb2_grpc import OptionPricingServiceStub
+from finance.options.black_scholes_pb2 import BlackScholesParameters, OptionType
+from finance.options.black_scholes_pb2_grpc import OptionPricingServiceStub
 
 # Create parameters
 params = BlackScholesParameters(
@@ -47,8 +44,36 @@ params = BlackScholesParameters(
     time_to_maturity=1.0,
     option_type=OptionType.CALL
 )
+```
 
-# Use in your application...
+#### C++
+```cpp
+#include "finance/options/black_scholes.pb.h"
+
+void CalculateOption() {
+  finance::options::BlackScholesParameters params;
+  params.set_stock_price(100.0);
+  params.set_strike_price(105.0);
+  params.set_risk_free_rate(0.05);
+  params.set_volatility(0.2);
+  params.set_time_to_maturity(1.0);
+  params.set_option_type(finance::options::OptionType::CALL);
+}
+```
+
+#### Java
+```java
+import finance.options.BlackScholes.BlackScholesParameters;
+import finance.options.BlackScholes.OptionType;
+
+BlackScholesParameters params = BlackScholesParameters.newBuilder()
+    .setStockPrice(100.0)
+    .setStrikePrice(105.0)
+    .setRiskFreeRate(0.05)
+    .setVolatility(0.2)
+    .setTimeToMaturity(1.0)
+    .setOptionType(OptionType.CALL)
+    .build();
 ```
 
 ## Development
@@ -85,9 +110,12 @@ make docker_build
 3. Validate with `make validate`
 4. Submit a pull request
 
-## Versioning
+## Future Enhancements
 
-We use semantic versioning. When a new version is tagged, a corresponding Docker image will be automatically built and published.
+Planned additions to this repository include:
+- Binomial Tree option pricing parameters
+- American option pricing parameters
+- Greeks calculation parameters
 
 ## License
 

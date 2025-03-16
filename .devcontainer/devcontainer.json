@@ -1,6 +1,15 @@
 {
     "name": "Finance Protos Development",
-    "dockerFile": "Dockerfile",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "mounts": [
+      "source=${env:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached",
+      "type=bind,source=/run/host-services/ssh-auth.sock,target=/ssh-agent"
+    ],
+    "containerEnv": {
+        "SSH_AUTH_SOCK": "/ssh-agent"
+    },
     "context": ".",
     
     // Set *default* container specific settings.json values on container create.
@@ -21,7 +30,7 @@
     // "forwardPorts": [],
     
     // Use 'postCreateCommand' to run commands after the container is created.
-    "postCreateCommand": "/bin/bash -c make setup && echo 'export PATH=$HOME/.local/bin:$PATH' >> ~/.bashrc && . ~/.bashrc",
+    "postCreateCommand": "/bin/bash -c make setup && echo 'export PATH=$HOME/.local/bin:$PATH' >> ~/.bashrc && . ~/.bashrc && /bin/bash -c '[ -d ~/.ssh ] && chmod 700 ~/.ssh && chmod 600 ~/.ssh/id_rsa* && ssh-keyscan -H github.com >> ~/.ssh/known_hosts || echo \"Skipping SSH configuration; no keys found.\"'",
     
     // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
     "remoteUser": "vscode",
