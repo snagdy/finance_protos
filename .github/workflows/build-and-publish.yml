@@ -9,11 +9,11 @@ on:
       - 'Dockerfile'
       - 'scripts/**'
       - '.github/workflows/build-and-publish.yml'
+    # Optionally run on tags to create versioned releases
+    tags:
+    - 'v*'
   # Allow manual triggering
   workflow_dispatch:
-  # Optionally run on tags to create versioned releases
-  tags:
-    - 'v*'
 
 env:
   REGISTRY: ghcr.io
