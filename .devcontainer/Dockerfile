@@ -4,6 +4,8 @@ FROM mcr.microsoft.com/vscode/devcontainers/base:debian-11
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install \
         protobuf-compiler \
+        protobuf-compiler-grpc \
+        libgrpc++-dev \
         python3-pip \
         python3-dev \
         curl \

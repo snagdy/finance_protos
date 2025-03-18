@@ -26,9 +26,8 @@ echo "Found $(echo $PROTO_FILES | wc -w) proto files"
 # Generate C++ code
 echo "Generating C++ code..."
 for proto_file in $PROTO_FILES; do
-  protoc $INCLUDES --cpp_out=gen/cpp $proto_file
+  protoc $INCLUDES --cpp_out=gen/cpp --grpc_out=gen/cpp --plugin=protoc-gen-grpc=/usr/bin/grpc_cpp_plugin $proto_file
 done
-
 # Generate Python code
 echo "Generating Python code..."
 for proto_file in $PROTO_FILES; do
