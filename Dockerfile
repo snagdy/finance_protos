@@ -6,6 +6,7 @@ FROM debian:bullseye-slim AS builder
 # Install required tools for proto compilation
 RUN apt-get update && apt-get install -y \
     protobuf-compiler \
+    protobuf-compiler-grpc \
     python3-pip \
     curl \
     unzip \
