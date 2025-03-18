@@ -2,6 +2,11 @@ syntax = "proto3";
 
 package finance.options;
 
+option java_package = "finance.options";
+option java_outer_classname = "OptionPricingProto";
+option go_package = "finance/options";
+option csharp_namespace = "Finance.Options";
+
 // Defines the type of option
 enum OptionType {
   CALL = 0;
