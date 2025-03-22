@@ -21,6 +21,8 @@ PROTO_FILES=$(find "$PROTO_SRC" -name "*.proto")
 echo "=== Generating code for Protocol Buffers ==="
 echo "Found $(echo $PROTO_FILES | wc -w) proto file(s)"
 
+# TODO(snagdy): update to use BUF instead
+
 # Generate C++ code
 echo "Generating C++ code..."
 for proto_file in $PROTO_FILES; do
