@@ -14,21 +14,37 @@ Currently, this repository includes the following model:
 
 ## Usage
 
-### Importing in Your Project
-
-You can use these protos in your project by pulling our pre-built Docker image:
+You can use these protos in your project by pulling our pre-built Docker image.
+This is not the only way to get these, just a way.
+You can do the equivalent within a Dockerfile instead.
 
 ```bash
 # Pull the image (replace with the appropriate version)
-docker pull ghcr.io/your-org/finance_protos:latest
+docker pull ghcr.io/snagdy/finance_protos:latest
+```
 
+### Using .proto Files in Your Project via Docker (recommended)
+
+```bash
+docker create --name temp_protos ghcr.io/snagdy/finance_protos:latest
+docker cp temp_protos:/protos/. ./your_project/protos/
+docker rm temp_protos
+```
+
+### Using Generated Files in Your Project via Docker (NOTE: not recommended)
+
+
+```bash
 # Extract the generated code for your language
-docker create --name temp_protos ghcr.io/your-org/finance_protos:latest
-docker cp temp_protos:/gen/python/. ./my_project/generated_protos/
+docker create --name temp_protos ghcr.io/snagdy/finance_protos:latest
+docker cp temp_protos:/gen/python/. ./your_project/generated_protos/
 docker rm temp_protos
 ```
 
 ### Example Usage by Language
+
+NOTE: Your actual import / include paths might differ depending on your directory 
+structure setup and build system configs.
 
 #### Python
 ```python

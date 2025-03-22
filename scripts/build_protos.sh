@@ -8,11 +8,9 @@ PROTO_SRC="protos"
 GEN_CPP="gen/cpp"
 GEN_PYTHON="gen/python"
 GEN_JAVA="gen/java"
-GEN_GO="gen/go"
-GEN_CSHARP="gen/csharp"
 
 # Create output directories if they don't exist
-mkdir -p "$GEN_CPP" "$GEN_PYTHON" "$GEN_JAVA" "$GEN_GO" "$GEN_CSHARP"
+mkdir -p "$GEN_CPP" "$GEN_PYTHON" "$GEN_JAVA"
 
 # Use a single include path so that the proto file paths are relative to the proto root.
 INCLUDES="-I$PROTO_SRC"
