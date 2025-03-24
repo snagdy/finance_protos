@@ -53,10 +53,10 @@ FROM alpine:3.17
 RUN addgroup -S protouser && adduser -S protouser -G protouser
 
 # Create directory structure
-WORKDIR /protos
+WORKDIR /proto
 
 # Copy proto files from builder
-COPY --from=builder --chown=protouser:protouser /build/protos/ /protos/
+COPY --from=builder --chown=protouser:protouser /build/proto/ /proto/
 
 # Copy generated code for each language
 COPY --from=builder --chown=protouser:protouser /build/gen/ /gen/
