@@ -4,18 +4,19 @@ set -e
 # Script to generate code from proto files for multiple languages
 
 # Define directories
-PROTO_SRC="protos"
+PROTO_SRC="proto"
 GEN_CPP="gen/cpp"
 GEN_PYTHON="gen/python"
 GEN_JAVA="gen/java"
+GEN_CSHARP="gen/csharp"
 
 # Create output directories if they don't exist
-mkdir -p "$GEN_CPP" "$GEN_PYTHON" "$GEN_JAVA"
+mkdir -p "$GEN_CPP" "$GEN_PYTHON" "$GEN_JAVA" "$GEN_CSHARP"
 
 # Use a single include path so that the proto file paths are relative to the proto root.
 INCLUDES="-I$PROTO_SRC"
 
-# Find all proto files under protos/
+# Find all proto files under proto/
 PROTO_FILES=$(find "$PROTO_SRC" -name "*.proto")
 
 echo "=== Generating code for Protocol Buffers ==="
@@ -26,7 +27,10 @@ echo "Found $(echo $PROTO_FILES | wc -w) proto file(s)"
 # Generate C++ code
 echo "Generating C++ code..."
 for proto_file in $PROTO_FILES; do
-  protoc $INCLUDES --cpp_out="$GEN_CPP" --grpc_out="$GEN_CPP" --plugin=protoc-gen-grpc="$(which grpc_cpp_plugin)" "$proto_file"
+  protoc $INCLUDES --cpp_out="$GEN_CPP" \
+    --grpc_out="$GEN_CPP" \
+    --plugin=protoc-gen-grpc="$(which grpc_cpp_plugin)" \
+    "$proto_file"
 done
 
 # Generate Python code
@@ -57,19 +61,6 @@ echo "Generating Java code..."
 for proto_file in $PROTO_FILES; do
   protoc $INCLUDES --java_out="$GEN_JAVA" "$proto_file"
 done
-
-# Generate Go code (if protoc-gen-go is available)
-if command -v protoc-gen-go &> /dev/null; then
-  echo "Generating Go code..."
-  for proto_file in $PROTO_FILES; do
-    protoc $INCLUDES --go_out="$GEN_GO" --go-grpc_out="$GEN_GO" \
-      --go_opt=module=finance/options \
-      --go-grpc_opt=module=finance/options \
-      "$proto_file"
-  done
-else
-  echo "Skipping Go code generation (protoc-gen-go not installed)"
-fi
 
 # Generate C# code
 echo "Generating C# code..."

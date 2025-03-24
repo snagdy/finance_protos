@@ -6,8 +6,8 @@ set -e
 echo "=== Validating Protocol Buffer Files ==="
 
 # Find all proto files
-PROTO_FILES=$(find protos -name "*.proto")
-PROTO_DIRS=$(find protos -type d | sort | uniq)
+PROTO_FILES=$(find proto -name "*.proto")
+PROTO_DIRS=$(find proto -type d | sort | uniq)
 
 if [ -z "$PROTO_FILES" ]; then
   echo "No proto files found!"
@@ -33,7 +33,7 @@ done
 # Check if protolint exists and use it for style validation
 if command -v protolint &> /dev/null; then
   echo "Checking style with protolint..."
-  protolint lint protos/
+  protolint lint proto/
 elif [ -f ".protolint.yaml" ]; then
   echo "protolint not found but .protolint.yaml exists. Skipping style check."
   echo "Consider installing protolint: https://github.com/yoheimuta/protolint"
