@@ -28,7 +28,7 @@ RUN pip3 install grpcio-tools==1.53.0 mypy-protobuf==3.4.0
 WORKDIR /build
 
 # Copy proto files and scripts
-COPY protos/ /build/protos/
+COPY proto/ /build/proto/
 COPY scripts/ /build/scripts/
 
 # Make scripts executable
