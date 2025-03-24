@@ -7,7 +7,7 @@ on:
     branches: [ main ]
     # Only run when proto files or build configurations change
     paths:
-      - 'protos/**'
+      - 'proto/**'
       - 'Dockerfile'
       - 'scripts/**'
       - '.github/workflows/build-and-publish.yml'
