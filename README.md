@@ -26,9 +26,9 @@ docker pull ghcr.io/snagdy/finance_protos:latest
 ### Using .proto Files in Your Project via Docker (recommended)
 
 ```bash
-docker create --name temp_protos ghcr.io/snagdy/finance_protos:latest
-docker cp temp_protos:/protos/. ./your_project/protos/
-docker rm temp_protos
+docker create --name temp_proto ghcr.io/snagdy/finance_protos:latest
+docker cp temp_proto:/proto/. ./your_project/proto/
+docker rm temp_proto
 ```
 
 ### Using Generated Files in Your Project via Docker (NOTE: not recommended)
@@ -36,9 +36,9 @@ docker rm temp_protos
 
 ```bash
 # Extract the generated code for your language
-docker create --name temp_protos ghcr.io/snagdy/finance_protos:latest
-docker cp temp_protos:/gen/python/. ./your_project/generated_protos/
-docker rm temp_protos
+docker create --name temp_proto ghcr.io/snagdy/finance_protos:latest
+docker cp temp_proto:/gen/python/. ./your_project/generated_proto/
+docker rm temp_proto
 ```
 
 ### Example Usage by Language
@@ -56,6 +56,7 @@ params = BlackScholesParameters(
     stock_price=100.0,
     strike_price=105.0,
     risk_free_rate=0.05,
+    dividend_rate=0.05,
     volatility=0.2,
     time_to_maturity=1.0,
     option_type=OptionType.CALL
@@ -66,11 +67,12 @@ params = BlackScholesParameters(
 ```cpp
 #include "finance/options/black_scholes.pb.h"
 
-void CalculateOption() {
+void ExampleSetParams() {
   finance::options::BlackScholesParameters params;
   params.set_stock_price(100.0);
   params.set_strike_price(105.0);
   params.set_risk_free_rate(0.05);
+  params.set_dividend_rate(0.05);
   params.set_volatility(0.2);
   params.set_time_to_maturity(1.0);
   params.set_option_type(finance::options::OptionType::CALL);
@@ -86,6 +88,7 @@ BlackScholesParameters params = BlackScholesParameters.newBuilder()
     .setStockPrice(100.0)
     .setStrikePrice(105.0)
     .setRiskFreeRate(0.05)
+    .setDividendRate(0.05)
     .setVolatility(0.2)
     .setTimeToMaturity(1.0)
     .setOptionType(OptionType.CALL)
