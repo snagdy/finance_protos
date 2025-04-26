@@ -24,7 +24,7 @@ message BlackScholesParameters {
   OptionType option_type  = 7;  // Whether this is a call or put option
 }
 
-// Input parameters for Black-Scholes option implied vol
+// Input parameters for Black-Scholes option implied volatility
 message BlackScholesImpliedVolParameters {
   double option_premium   = 1;  // C/P: Call or put premium
   double stock_price      = 2;  // S:   Current stock price
@@ -41,7 +41,7 @@ message OptionPricingRequest {
 }
 
 message OptionImpliedVolRequest {
-  BlackScholesImpliedVolParameters BlackScholesParameters = 1;
+  BlackScholesImpliedVolParameters BlackScholesImpliedVolParameters = 1;
 }
 
 // Response message containing the computed option price
@@ -53,8 +53,18 @@ message OptionPricingResponse {
   OptionType option_type  = 5;
 }
 
+// Response message containing the computed implied volatility
+message OptionImpliedVolResponse {
+  double implied_volatility = 1;
+  double delta              = 2;
+  double gamma              = 3;
+  double vega               = 4;
+  OptionType option_type    = 5;
+}
+
 // Service definition for option pricing
 service OptionPricingService {
   // Calculates the price of an option using Black-Scholes model
   rpc CalculateOptionPrice(OptionPricingRequest) returns (OptionPricingResponse) {}
+  rpc CalculateImpliedVol(OptionImpliedVolRequest) returns (OptionImpliedVolResponse) {}
 }
