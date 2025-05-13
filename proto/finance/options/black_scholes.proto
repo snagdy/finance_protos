@@ -40,8 +40,9 @@ message OptionPricingRequest {
   BlackScholesParameters parameters = 1;
 }
 
+// Request message for option implied vol
 message OptionImpliedVolRequest {
-  BlackScholesImpliedVolParameters BlackScholesImpliedVolParameters = 1;
+  BlackScholesImpliedVolParameters parameters = 1;
 }
 
 // Response message containing the computed option price
